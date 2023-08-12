@@ -1,17 +1,35 @@
 import cv2 as cv
+import numpy as np
 
 
-def process_frame(img):
-    cv.imshow('frame', img)
+class FeatureExtractor():
+    def __init__(self, img=None) -> None:
+        self.img = img
+
+    def extract(self, img):
+        self.img = img
+        gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        corners = cv.goodFeaturesToTrack(gray, 3000, 0.01, 3)
+        corners = np.intp(corners)
+
+        return corners
+
+    def imshow(self, corners):
+        for i in corners:
+            x, y = i.ravel()
+            cv.circle(self.img, (x, y), 3, (0, 255, 0), -1)
+        cv.imshow('frame', self.img)
 
 
 if __name__ == "__main__":
     cap = cv.VideoCapture('driving720slowed.mp4')
+    fe = FeatureExtractor()
 
     while cap.isOpened():
         ret, frame = cap.read()
         if ret == True:
-            process_frame(frame)
+            feats = fe.extract(frame)
+            fe.imshow(feats)
         else:
             break
         if cv.waitKey(1) == ord('q'):
