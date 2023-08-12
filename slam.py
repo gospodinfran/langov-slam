@@ -6,10 +6,11 @@ class FeatureExtractor():
     def __init__(self, img=None) -> None:
         self.img = img
 
-    def extract(self, img):
+    def extract(self, img, maxCorners=3000, qualityLevel=0.01, minDistance=5):
         self.img = img
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        corners = cv.goodFeaturesToTrack(gray, 3000, 0.01, 3)
+        corners = cv.goodFeaturesToTrack(
+            gray, maxCorners, qualityLevel, minDistance)
         corners = np.intp(corners)
 
         return corners
